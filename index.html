@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Generation Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="Spark AI Logo-W.png" alt="Spark AI Logo" class="logo" id="logo">
+            <h1>Lead Generation Form</h1>
+            <p class="subtitle">Fill in the details to generate leads</p>
+            <p class="subtitle" style="font-size: 0.875rem; margin-top: 10px; opacity: 0.8;">
+                <a href="http://localhost:8080/index.html" target="_blank" style="color: rgba(255,255,255,0.9); text-decoration: underline;">Testing Link: http://localhost:8080/index.html</a>
+            </p>
+        </div>
+
+        <form id="leadForm" class="form-container">
+            <!-- User Information Section -->
+            <div class="form-section">
+                <h2>Your Information</h2>
+                
+                <div class="form-group">
+                    <label for="name">Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+            </div>
+
+            <!-- Lead Details Section -->
+            <div class="form-section">
+                <h2>Lead Details</h2>
+
+                <div class="form-group">
+                    <label for="titles">Title <span class="required">*</span></label>
+                    <input type="text" id="titles" name="titles" required 
+                           placeholder="Select or type a title" 
+                           list="titleOptions">
+                    <datalist id="titleOptions">
+                        <option value="AI Engineer">
+                        <option value="AI Developer">
+                        <option value="Machine Learning Engineer">
+                        <option value="Data Scientist">
+                        <option value="AI Researcher">
+                        <option value="ML Engineer">
+                        <option value="Deep Learning Engineer">
+                        <option value="AI Architect">
+                        <option value="NLP Engineer">
+                        <option value="Computer Vision Engineer">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" required 
+                           placeholder="Select or type a location" 
+                           list="locationOptions">
+                    <datalist id="locationOptions">
+                        <option value="Dubai">
+                        <option value="Doha">
+                        <option value="Kerala">
+                        <option value="Mumbai">
+                        <option value="Delhi">
+                        <option value="Bangalore">
+                        <option value="Singapore">
+                        <option value="London">
+                        <option value="New York">
+                        <option value="San Francisco">
+                        <option value="Toronto">
+                        <option value="Sydney">
+                        <option value="Paris">
+                        <option value="Berlin">
+                        <option value="Tokyo">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="purpose">Purpose <span class="required">*</span></label>
+                    <textarea id="purpose" name="purpose" required 
+                              placeholder="What specifics are you looking for in these leads?" 
+                              rows="4"></textarea>
+                    <small class="help-text">Describe what you're looking for in these leads</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">Keywords</label>
+                    <input type="text" id="keywords" name="keywords" 
+                           placeholder="Enter relevant keywords (optional, e.g., machine learning, deep learning)">
+                    <small class="help-text">Optional: Enter keywords separated by commas</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="orgLocation">Organisation Location <span class="required">*</span></label>
+                    <input type="text" id="orgLocation" name="orgLocation" required 
+                           placeholder="Current location of the leads">
+                </div>
+
+                <div class="form-group">
+                    <label for="seniority">Seniority <span class="required">*</span></label>
+                    <select id="seniority" name="seniority" required>
+                        <option value="">Select seniority level</option>
+                        <option value="owner">Owner</option>
+                        <option value="founder">Founder</option>
+                        <option value="c_suite">C-Suite</option>
+                        <option value="partner">Partner</option>
+                        <option value="vp">VP</option>
+                        <option value="head">Head</option>
+                        <option value="director">Director</option>
+                        <option value="manager">Manager</option>
+                        <option value="senior">Senior</option>
+                        <option value="entry">Entry</option>
+                        <option value="intern">Intern</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message <span class="required">*</span></label>
+                    <textarea id="message" name="message" required 
+                              placeholder="Hey NAME, [your message here]... (Must include NAME and be less than 200 characters)" 
+                              rows="4" 
+                              maxlength="200"></textarea>
+                    <div class="char-counter">
+                        <span id="charCount">0</span>/200 characters
+                    </div>
+                    <small class="help-text warning-text">⚠️ Must include "NAME" (e.g., "Hey NAME" or "Hello NAME") - NAME will be replaced with actual names</small>
+                </div>
+            </div>
+
+            <!-- Saved Inputs Section -->
+            <div class="form-section" id="savedInputsSection" style="display: none;">
+                <h2>Saved Inputs</h2>
+                <div id="savedInputsList" class="saved-inputs"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="button" id="saveInputsBtn" class="btn btn-secondary">Save Inputs</button>
+                <button type="submit" id="generateBtn" class="btn btn-primary" style="display: none;">
+                    Generate Leads
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // No warning needed - form will use traditional POST submission
+    </script>
+    <script src="script.js?v=3"></script>
+</body>
+</html>
+
