@@ -8,8 +8,6 @@ const purposeInput = document.getElementById('purpose');
 const keywordsInput = document.getElementById('keywords');
 const orgLocationInput = document.getElementById('orgLocation');
 const seniorityInput = document.getElementById('seniority');
-const messageInput = document.getElementById('message');
-const charCountSpan = document.getElementById('charCount');
 const generateBtn = document.getElementById('generateBtn');
 const saveInputsBtn = document.getElementById('saveInputsBtn');
 const savedInputsSection = document.getElementById('savedInputsSection');
@@ -21,22 +19,6 @@ logo.onerror = function() {
     this.classList.add('hidden');
 };
 
-// Character counter for message
-messageInput.addEventListener('input', function() {
-    const length = this.value.length;
-    charCountSpan.textContent = length;
-    
-    const charCounter = charCountSpan.parentElement;
-    if (length > 180) {
-        charCounter.classList.add('error');
-        charCounter.classList.remove('warning');
-    } else if (length > 150) {
-        charCounter.classList.add('warning');
-        charCounter.classList.remove('error');
-    } else {
-        charCounter.classList.remove('warning', 'error');
-    }
-});
 
 // Validate required fields and show/hide Generate button
 function validateForm() {
@@ -47,8 +29,7 @@ function validateForm() {
         locationInput,
         purposeInput,
         orgLocationInput,
-        seniorityInput,
-        messageInput
+        seniorityInput
     ];
 
     // Check if all required fields are filled
@@ -59,13 +40,8 @@ function validateForm() {
         return field.value.trim() !== '';
     });
 
-    // Additional validation for message
-    const messageValid = messageInput.value.trim().length > 0 && 
-                        messageInput.value.trim().length <= 200 &&
-                        messageInput.value.toLowerCase().includes('name');
-
     // Show/hide Generate button
-    if (allFilled && messageValid) {
+    if (allFilled) {
         generateBtn.style.display = 'block';
     } else {
         generateBtn.style.display = 'none';
@@ -74,7 +50,7 @@ function validateForm() {
 
 // Add event listeners to all inputs
 [nameInput, emailInput, titlesInput, locationInput, purposeInput, keywordsInput,
- orgLocationInput, seniorityInput, messageInput].forEach(input => {
+ orgLocationInput, seniorityInput].forEach(input => {
     input.addEventListener('input', validateForm);
     input.addEventListener('change', validateForm);
     input.addEventListener('blur', validateForm);
@@ -94,7 +70,6 @@ function saveInputs() {
         keywords: keywordsInput.value.trim(),
         orgLocation: orgLocationInput.value.trim(),
         seniority: seniorityInput.value.trim(),
-        message: messageInput.value.trim(),
         timestamp: new Date().toISOString()
     };
 
@@ -187,10 +162,6 @@ function useSavedInput(index) {
     keywordsInput.value = input.keywords || '';
     orgLocationInput.value = input.orgLocation || '';
     seniorityInput.value = input.seniority || '';
-    messageInput.value = input.message || '';
-    
-    // Update character count
-    charCountSpan.textContent = messageInput.value.length;
     
     // Validate form
     validateForm();
@@ -241,58 +212,46 @@ function showMessage(text, type = 'success') {
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    // Final validation
-    const message = messageInput.value.trim();
-    if (message.length > 200) {
-        showMessage('Message must be 200 characters or less!', 'error');
-        return;
-    }
-    
-    if (!message.toLowerCase().includes('name')) {
-        showMessage('Message must include "NAME" (e.g., "Hey NAME" or "Hello NAME")!', 'error');
-        return;
-    }
-    
     // Prepare webhook data - matching exact webhook JSON format
     // Mapping: email → email, name → Name, titles → Titles, keywords → Keywords, 
     // location → location, seniority → Seniority, orgLocation → 'Organization Location', 
     // purpose → 'Job Description', message → Message
-    // Note: Frontend shows "Purpose" but it maps to "Job Description" in webhook
-    // IMPORTANT: Keywords uses keywordsInput, Job Description uses purposeInput (separate fields)
+    // Note: Frontend shows "Industry" (maps to Keywords in webhook) and "Purpose" (maps to Job Description)
+    // IMPORTANT: Industry field (keywordsInput) maps to Keywords, Purpose (purposeInput) maps to Job Description (separate fields)
     
     // Get values directly from DOM elements at submission time to ensure accuracy
     const keywordsElement = document.getElementById('keywords');
     const purposeElement = document.getElementById('purpose');
     
-    // Get the actual values - Keywords from keywords field, Purpose from purpose field
+    // Get the actual values - Industry field maps to Keywords, Purpose maps to Job Description
     const keywordsValue = keywordsElement ? keywordsElement.value.trim() : '';
     const purposeValue = purposeElement ? purposeElement.value.trim() : '';
     
     // Debug: Log the raw values before processing
     console.log('=== DEBUG: Field Values ===');
-    console.log('keywordsElement found:', !!keywordsElement);
-    console.log('purposeElement found:', !!purposeElement);
-    console.log('Keywords field value (raw):', keywordsElement ? keywordsElement.value : 'ELEMENT NOT FOUND');
+    console.log('Industry field (keywordsElement) found:', !!keywordsElement);
+    console.log('Purpose field (purposeElement) found:', !!purposeElement);
+    console.log('Industry field value (raw):', keywordsElement ? keywordsElement.value : 'ELEMENT NOT FOUND');
     console.log('Purpose field value (raw):', purposeElement ? purposeElement.value : 'ELEMENT NOT FOUND');
-    console.log('Keywords value (trimmed):', keywordsValue);
+    console.log('Industry value (trimmed):', keywordsValue);
     console.log('Purpose value (trimmed):', purposeValue);
     
     const webhookData = {
         email: emailInput.value.trim().toLowerCase(),
         Name: nameInput.value.trim(),
         Titles: titlesInput.value.trim(), // Singular input (title) → Plural output (Titles)
-        Keywords: keywordsValue, // Keywords from keywordsInput field ONLY (NOT purpose)
+        Keywords: keywordsValue, // Industry field (keywordsInput) maps to Keywords in webhook (NOT purpose)
         location: locationInput.value.trim(),
         Seniority: seniorityInput.value.trim(),
         'Organization Location': orgLocationInput.value.trim(), // orgLocation → 'Organization Location'
         'Job Description': purposeValue, // Purpose from purposeInput field ONLY (NOT keywords)
-        Message: message
+        Message: '' // Message field removed from frontend
     };
     
     // Debug: Verify the final webhook data
     console.log('=== Final Webhook Data ===');
-    console.log('Keywords in webhook:', webhookData.Keywords);
-    console.log('Job Description in webhook:', webhookData['Job Description']);
+    console.log('Keywords (from Industry field) in webhook:', webhookData.Keywords);
+    console.log('Job Description (from Purpose field) in webhook:', webhookData['Job Description']);
     console.log('Full webhook data:', JSON.stringify(webhookData, null, 2));
     
     // Show loading state
